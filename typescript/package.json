@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "@types/node": "^20.12.2",
+    "@types/uuid": "^9.0.8",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1590.0",
+    "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
+    "uuid": "^9.0.1"
+  }
+}
