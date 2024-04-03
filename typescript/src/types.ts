@@ -12,16 +12,14 @@ export interface NewsResponse {
     articles : News[];
 }
 
-export type HistoricalData = {
+export type CryptoData = {
     time: number;
     high: number;
     low: number;
     open: number;
-    volumefrom: number;
-    volumeto: number;
     close: number;
 }
 
-export interface CryptocurrencyResponse {
-    Data: HistoricalData[]
+export interface HistoricalResponse {
+    Data: CryptoData[]
 }
