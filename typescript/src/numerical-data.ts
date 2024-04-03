@@ -2,6 +2,7 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import { CryptoData, HistoricalResponse } from './types';
 import { WriteRequest } from '@aws-sdk/client-dynamodb';
+import { v4 } from 'uuid';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ const preprocess = (historicalData: CryptoData[], symbol: string) => {
         return {
             PutRequest: {
                 Item: {
+                    'id': { S: v4()},
                     'timestamp': { N: data.time.toString() },
                     'symbol': { S: symbol },
                     'open': { N: data.open.toString() },
