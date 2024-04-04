@@ -14,7 +14,7 @@ export const handler = async (event) => {
   const params = {
     TableName: "WebSocketClients",
     Item: {
-      id: connId,
+      ConnectionId: connId,
     },
   };
 

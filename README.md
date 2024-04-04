@@ -9,14 +9,39 @@ Create tables with the following configurations:
 | News              | id (string)   | timestamp (number)     | 1                      |          20    | symbol-timestamp-index    | symbol            | timestamp             |
 | Crypto            | id (string)   | timestamp (number)     | 1                      |       180      | -                         | -                 | -                     |
 | Sentiments        | id (string)   | timestamp (number)     | 1                      |           1    | -                         | -                 | -                     |
-| WebSocketClients  | id (string)   | -                      | 1                      |            1   | -                         | -                 | -                     |
+| WebSocketClients  | ConnectionId (string)   | -                      | 1                      |            1   | -                         | -                 | -                     |
 
 ## Lambda Functions
 
 Create the following lambda functions:
 
-### SentimentAnalysis
+1. SentimentAnalysis
+    - Add trigger dynamodb stream to `News` table.
+    - Set Configuration timeout to 1 minute.
 
-1. Set the runtime to `Node.js 20.x`.
-2. Add trigger dynamodb stream to `News` table.
-3. Set Configuration timeout to 1 minute.
+2. wsConnect
+
+3. wsDisconnect
+
+4. wsMessage
+
+5. wsDefault
+
+6. plotData
+    - Set Configuration timeout to 15 seconds.
+    - Set Environment variables
+
+        ```json
+        PLOTLY_API_KEY=""
+        PLOTLY_USERNAME=""
+        STUDENT_ID=""
+        ```
+
+## API Gateway
+
+Create the following API Gateway
+
+1. $connect -> Lambda function: wsConnect
+2. $disconnect -> Lambda function: wsDisconnect
+3. $default -> Lambda function: wsDefault
+4. sendMessage -> Lambda function: wsMessage
