@@ -2,19 +2,21 @@
 
 ## Dynamo DB
 
-Create tables with the following schemas:
+Create tables with the following configurations:
 
-| Table Name        | Partition Key | Sort Key                  | GSI Name                  | GSI Partition Key | GSI Sort Key          |
-| -----------       | -----------   | -----------               | -----------               | -----------       | -----------           |
-| News              | id (string)   | timestamp (number)        | symbol-timestamp-index    | symbol            | timestamp             |
-| Crypto            | id (string)   | timestamp (number)        | -                         | -                 | -                     |
-| Sentiments        | id (string)   | timestamp (number)        | -                         | -                 | -                     |
-| WebSocketClients  | id (string)   | -                         | -                         | -                 | -                     |
+| Table Name        | Partition Key | Sort Key               | Read Capacity          | Write Capacity | GSI Name                  | GSI Partition Key | GSI Sort Key          |
+| -----------       | -----------   | -----------            | -----------            | -----------    | -----------               | -----------       |       -----------                |
+| News              | id (string)   | timestamp (number)     | 1                      |          20    | symbol-timestamp-index    | symbol            | timestamp             |
+| Crypto            | id (string)   | timestamp (number)     | 1                      |       180      | -                         | -                 | -                     |
+| Sentiments        | id (string)   | timestamp (number)     | 1                      |           1    | -                         | -                 | -                     |
+| WebSocketClients  | id (string)   | -                      | 1                      |            1   | -                         | -                 | -                     |
 
-## Issues
+## Lambda Functions
 
-Issue:
-ProvisionedThroughputExceededException: The level of configured provisioned throughput for the table was exceeded. Consider increasing your provisioning level with the UpdateTable API.
+Create the following lambda functions:
 
-Fix:
-Go to AWS Console and increase DynamoDB tables write capacity by disabling auto scaling and setting them to 20 for News and 180 for Crypto.
+### SentimentAnalysis
+
+1. Set the runtime to `Node.js 20.x`.
+2. Add trigger dynamodb stream to `News` table.
+3. Set Configuration timeout to 1 minute.
