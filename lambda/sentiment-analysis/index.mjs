@@ -1,34 +1,116 @@
-import { ListTablesCommand, DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import {
+  DynamoDBClient,
+  BatchWriteItemCommand,
+} from "@aws-sdk/client-dynamodb";
+import { QueryCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+
 import axios from "axios";
+import { v4 } from "uuid";
 
 const client = new DynamoDBClient({});
+const docClient = DynamoDBDocumentClient.from(client);
 
 export const handler = async (event) => {
-  const command = new ListTablesCommand({});
+  const symbols = ["BTC", "ETH", "BNB", "SOL", "DOGE"];
+  const textProcessingApiUrl = "http://text-processing.com/api/sentiment/";
 
-  const response = await client.send(command);
-  console.log(response);
-  return response;
+  const sentiments = await Promise.all(
+    symbols.map(async (symbol) => {
+      let positive = [],
+        negative = [],
+        neutral = [],
+        textArray = [];
 
-  // for (let record of event.Records) {
-  //   if (record.eventName == "INSERT") {
-  //     let textProcessingApiUrl = "http://text-processing.com/api/sentiment/";
-  //     let response = await axios.post(
-  //       textProcessingApiUrl,
-  //       {
-  //         text: record.dynamodb.NewImage.title.S,
-  //       },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/x-www-form-urlencoded",
-  //         },
-  //       }
-  //     );
-  //     console.log(response.data);
-  //     return {
-  //       statusCode: 200,
-  //       body: JSON.stringify("Success"),
-  //     };
-  //   }
-  // }
+      const command = new QueryCommand({
+        TableName: "News",
+        IndexName: "symbol-timestamp-index",
+        KeyConditionExpression: "symbol = :symbol",
+        ExpressionAttributeValues: {
+          ":symbol": symbol,
+        },
+        ScanIndexForward: false,
+        Limit: 3,
+      });
+
+      try {
+        const { Items } = await docClient.send(command);
+        if (!Items || !Items.length) return;
+
+        textArray = Items.map((item) => item.title);
+      } catch (error) {
+        return;
+      }
+
+      if (!textArray.length) return;
+
+      const sentimentResults = await Promise.all(
+        textArray.map(async (text) => {
+          try {
+            const response = await axios.post(
+              textProcessingApiUrl,
+              `text=${encodeURIComponent(text)}`,
+              {
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded",
+                },
+              }
+            );
+
+            return response.data;
+          } catch (error) {
+            throw new Error("Error fetching sentiment analysis API: " + error);
+          }
+        })
+      );
+
+      sentimentResults.forEach((result) => {
+        if (!result) return;
+
+        positive.push(result.probability.pos);
+        negative.push(result.probability.neg);
+        neutral.push(result.probability.neutral);
+      });
+
+      const positiveAvg = positive.reduce((a, b) => a + b, 0) / positive.length;
+      const negativeAvg = negative.reduce((a, b) => a + b, 0) / negative.length;
+      const neutralAvg = neutral.reduce((a, b) => a + b, 0) / neutral.length;
+
+      return {
+        PutRequest: {
+          Item: {
+            id: { S: v4().toString() },
+            timestamp: { N: `${Date.now()}` },
+            symbol: { S: symbol },
+            positive: { N: positiveAvg.toString() },
+            negative: { N: negativeAvg.toString() },
+            neutral: { N: neutralAvg.toString() },
+          },
+        },
+      };
+    })
+  );
+
+  const sentimentsFiltered = sentiments.filter((sentiment) => sentiment);
+
+  const command = new BatchWriteItemCommand({
+    RequestItems: {
+      Sentiments: sentimentsFiltered,
+    },
+  });
+
+  try {
+    await docClient.send(command);
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify(
+        "Error writing sentiments to DynamoDB: " + error.message
+      ),
+    };
+  }
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify("Sentiments successfully written to DynamoDB"),
+  };
 };
