@@ -30,7 +30,7 @@ function extractLast100(inputFilePath) {
   };
 
   const directory = path.dirname(inputFilePath);
-  const outputFile = path.join(directory, "output.json");
+  const outputFile = path.join(directory, "target.json");
 
   fs.writeFileSync(outputFile, JSON.stringify(newData, null, ""));
   console.log(
