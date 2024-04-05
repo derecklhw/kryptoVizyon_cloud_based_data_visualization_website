@@ -28,7 +28,7 @@ Create the following lambda functions:
 5. wsDefault
 
 6. plotData
-    - Set Configuration timeout to 15 seconds.
+    - Set Configuration timeout to 30 seconds.
     - Set Environment variables
 
         ```json
