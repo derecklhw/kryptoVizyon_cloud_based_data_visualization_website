@@ -3,17 +3,44 @@ import { invokeEndpoint } from "./prediction.mjs";
 
 //Axios will handle HTTP requests to web service
 import axios from "axios";
+import { queryData } from "./queryData.mjs";
 
 //The ID of the student whose data you want to plot
 let studentID = process.env.STUDENT_ID;
 
-//URL where student data is available
-let url = "https://y2gtfx0jg3.execute-api.us-east-1.amazonaws.com/prod/";
-
 export const handler = async (event) => {
+  const { symbol, url } = event.queryStringParameters;
   try {
+    if (!symbol) return { statusCode: 400, body: "Symbol is required" };
+
+    let endpoint =
+      symbol === "Synthetic"
+        ? "SyntheticDataEndpoint8"
+        : symbol === "BTC"
+        ? "SyntheticDataEndpoint8"
+        : symbol === "ETH"
+        ? "SyntheticDataEndpoint8"
+        : symbol === "BNB"
+        ? "SyntheticDataEndpoint8"
+        : symbol === "SOL"
+        ? "SyntheticDataEndpoint8"
+        : symbol === "DOGE"
+        ? "DOGE-Endpoint"
+        : "None";
+
+    if (endpoint === "None") return { statusCode: 400, body: "Invalid symbol" };
+
     //Get synthetic data
-    let { target, start } = (await axios.get(url + studentID)).data;
+    let responseData;
+    if (symbol === "synthetic") {
+      responseData = await axios.get(url + studentID);
+    } else {
+      responseData = await queryData(symbol);
+    }
+
+    console.log("Data for '" + symbol + " extracted.");
+
+    let { target, start } = responseData.data;
 
     //Add basic X values for plot
     let xValues = [];
@@ -25,7 +52,7 @@ export const handler = async (event) => {
 
     let xPredictionValues = [xValuesCount];
 
-    let { predictions } = await invokeEndpoint(target, start);
+    let { predictions } = await invokeEndpoint(endpoint, target, start);
     let yMeanValues = predictions[0].mean;
     let yLowerQuantileValues = predictions[0].quantiles["0.1"];
     let yUpperQuantileValues = predictions[0].quantiles["0.9"];
@@ -34,9 +61,9 @@ export const handler = async (event) => {
       xPredictionValues.push(i + xValuesCount);
     }
 
-    //Call function to plot data
+    // Call function to plot data
     let plotResult = await plotData(
-      studentID,
+      symbol,
       xValues,
       target,
       xPredictionValues,
@@ -44,9 +71,7 @@ export const handler = async (event) => {
       yLowerQuantileValues,
       yUpperQuantileValues
     );
-    console.log(
-      "Plot for student '" + studentID + "' available at: " + plotResult.url
-    );
+    console.log("Plot for '" + symbol + "' available at: " + plotResult.url);
 
     return {
       statusCode: 200,
@@ -56,7 +81,7 @@ export const handler = async (event) => {
     console.log("ERROR: " + JSON.stringify(err));
     return {
       statusCode: 500,
-      body: "Error plotting data for student ID: " + studentID,
+      body: "Error plotting data for " + symbol,
     };
   }
 };

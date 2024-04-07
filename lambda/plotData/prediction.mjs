@@ -10,7 +10,7 @@ import { addHours, format } from "date-fns";
 const client = new SageMakerRuntimeClient({});
 
 //Calls endpoint and logs results
-export async function invokeEndpoint(data, originalStartTime) {
+export async function invokeEndpoint(endpointName, data, originalStartTime) {
   /* Data we are going to send to endpoint
     REPLACE WITH YOUR OWN DATA!
     Should be last 100 points in your time series (depending on your choice of hyperparameters).
@@ -34,7 +34,7 @@ export async function invokeEndpoint(data, originalStartTime) {
 
   //Create and send command with data
   const command = new InvokeEndpointCommand({
-    EndpointName: "SyntheticDataEndpoint8",
+    EndpointName: endpointName,
     Body: JSON.stringify(endpointData),
     ContentType: "application/json",
     Accept: "application/json",

@@ -9,7 +9,7 @@ let plotly = Plotly(PLOTLY_USERNAME, PLOTLY_KEY);
 
 //Plots the specified data
 export async function plotData(
-  studentID,
+  symbol,
   xValues,
   yValues,
   xPredictionValues,
@@ -66,7 +66,7 @@ export async function plotData(
 
   //Layout of graph
   let layout = {
-    title: "Synthetic Data for Student " + studentID,
+    title: "Data for: " + symbol,
     font: {
       size: 25,
     },
