@@ -14,19 +14,20 @@
           </div>
         </div>
         <div class="flex-grow basis-2/3 border-y-2 border-slate-950">
-          <div class="flex justify-between">
-            <h1 class="text-lg px-4 py-3 font-medium">BTC Performance</h1>
+          <div class="flex justify-between items-center">
+            <h1 class="text-lg px-4 py-3 font-medium">
+              {{ selectedSymbol.name }} Performance
+            </h1>
             <Dropdown
               v-model="selectedSymbol"
               :options="symbols"
               optionLabel="name"
-              placeholder="Select a Crypto"
               class="m-4"
             />
           </div>
           <div class="flex sm:flex-row flex-col mx-4 h-5/6 items-center">
-            <Candlestick class="w-2/3 border" />
-            <Pie class="w-1/3 flex justify-center items-center border" />
+            <Candlestick />
+            <Pie />
           </div>
         </div>
       </div>
@@ -50,7 +51,7 @@ const symbols: SYMBOL[] = [
   { name: "SOL" },
   { name: "DOGE" },
 ];
-const selectedSymbol = ref<string>(symbols[0].name);
+const selectedSymbol = ref<SYMBOL>(symbols[0]);
 </script>
 
 <style scoped></style>

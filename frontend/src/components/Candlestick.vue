@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w-2/3 border">
     <apexchart
       type="candlestick"
       height="400"

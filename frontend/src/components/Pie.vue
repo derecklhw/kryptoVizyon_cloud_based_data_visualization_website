@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w-1/3 flex justify-center items-center border">
     <apexchart
       type="pie"
       width="550"
@@ -9,7 +9,6 @@
   </div>
 </template>
 <script setup lang="ts">
-const series = [44, 55, 13];
 const chartOptions = {
   chart: {
     width: 550,
@@ -30,5 +29,6 @@ const chartOptions = {
     },
   ],
 };
+const series = [44, 55, 13];
 </script>
 <style lang=""></style>
