@@ -37,7 +37,7 @@ const series = computed(() => {
   return [
     {
       data: props.historicalData.map((dataPoint: CryptoDataPoint) => ({
-        x: new Date(dataPoint.timestamp * 1000), // assuming timestamp is in seconds
+        x: new Date(dataPoint.timestamp * 1000),
         y: [dataPoint.open, dataPoint.high, dataPoint.low, dataPoint.close],
       })),
     },

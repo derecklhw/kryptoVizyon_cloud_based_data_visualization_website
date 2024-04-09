@@ -19,7 +19,7 @@ const getThirdPartyData = async (table: string) => {
         let currentChunk: WriteRequest[] = [];
 
         for (const symbol of symbols) {
-            const requestData: any = table === 'Crypto' ? await getNumericalData(symbol) : await getNewsData(symbol);
+            const requestData = table === 'Crypto' ? await getNumericalData(symbol) : await getNewsData(symbol);
             requestData.forEach((item: WriteRequest) => {
                 if (currentChunk.length >= batchWriteLimit) {
                     dataChunks.push(currentChunk);

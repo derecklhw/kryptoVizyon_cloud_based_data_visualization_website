@@ -20,6 +20,6 @@ export type CryptoData = {
     close: number;
 }
 
-export interface HistoricalResponse {
+export interface CryptoResponse {
     Data: CryptoData[]
 }

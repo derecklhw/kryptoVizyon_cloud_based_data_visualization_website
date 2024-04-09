@@ -76,7 +76,7 @@ const series = computed(() => {
     name: "historical",
     data: props.historicalData.map((dataPoint) => {
       return {
-        x: new Date(dataPoint.timestamp * 1000), // Convert timestamp to JavaScript Date
+        x: new Date(dataPoint.timestamp * 1000),
         y: [dataPoint.open, dataPoint.high, dataPoint.low, dataPoint.close],
       };
     }),
@@ -87,7 +87,7 @@ const series = computed(() => {
     name: "prediction",
     data: props.predictions.map((dataPoint) => {
       return {
-        x: new Date(dataPoint.timestamp * 1000), // Convert timestamp to JavaScript Date
+        x: new Date(dataPoint.timestamp * 1000),
         y: dataPoint.close,
       };
     }),

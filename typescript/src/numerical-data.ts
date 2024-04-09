@@ -1,6 +1,6 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { CryptoData, HistoricalResponse } from './types';
+import { CryptoData, CryptoResponse } from './types';
 import { WriteRequest } from '@aws-sdk/client-dynamodb';
 import { v4 } from 'uuid';
 
@@ -13,7 +13,7 @@ export const getNumericalData = async (symbol : string) : Promise<WriteRequest[]
     const apiUrl : string = `https://min-api.cryptocompare.com/data/v2/histohour?fsym=${symbol}&tsym=USD&limit=${QUERY_LIMIT}&api_key=${crypto_compare_api_key}`
     try {
         const response = await axios.get(apiUrl);
-        const data : HistoricalResponse = response.data.Data;
+        const data : CryptoResponse = response.data.Data;
         if ( !data.Data || data.Data.length === 0) return [];
         return preprocess(data.Data, symbol);
     }
