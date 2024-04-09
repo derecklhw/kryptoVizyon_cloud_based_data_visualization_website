@@ -10,7 +10,7 @@ const symbols = ["BTC", "ETH", "BNB", "SOL", "DOGE"];
 
 export async function getSentimentAnalysis() {
   console.log("Getting sentiment analysis data...");
-  let sentiments = [];
+  let sentiments = {};
   for (const symbol of symbols) {
     const command = new QueryCommand({
       TableName: "Sentiments",
@@ -27,14 +27,11 @@ export async function getSentimentAnalysis() {
       const { Items } = await docClient.send(command);
 
       if (Items.length > 0) {
-        sentiments.push({
-          symbol: symbol,
-          data: {
-            negative: Items[0].negative,
-            positive: Items[0].positive,
-            neutral: Items[0].neutral,
-          },
-        });
+        sentiments[symbol] = {
+          negative: Items[0].negative,
+          positive: Items[0].positive,
+          neutral: Items[0].neutral,
+        };
       } else {
         console.log("No data found for symbol:", symbol);
       }

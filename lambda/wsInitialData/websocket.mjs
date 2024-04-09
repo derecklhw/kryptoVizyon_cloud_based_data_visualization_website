@@ -25,15 +25,10 @@ export async function getSendMessagePromise(domain, stage, connId) {
 
     console.log("Successfully retrieved data.");
 
-    // console.log(predictions);
-
-    // Only send last 150 data points
-    historicData = historicData.map((data) => {
-      return {
-        symbol: data.symbol,
-        data: data.data.slice(-150),
-      };
-    });
+    historicData = historicData.reduce((accumulator, data) => {
+      accumulator[data.symbol] = data.data.slice(-150); // Only keep the last 150 data points
+      return accumulator;
+    }, {});
 
     //Create post to connection command
     const postToConnectionCommand = new PostToConnectionCommand({

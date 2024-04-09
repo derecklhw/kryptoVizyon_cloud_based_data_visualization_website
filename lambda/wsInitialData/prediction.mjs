@@ -11,7 +11,7 @@ const client = new SageMakerRuntimeClient({});
 
 export async function getPredictions(historicData) {
   console.log("Getting predictions...");
-  let predictions = [];
+  let predictions = {};
 
   for (const data of historicData) {
     let symbol = data.symbol;
@@ -44,10 +44,7 @@ export async function getPredictions(historicData) {
       };
     });
 
-    predictions.push({
-      symbol: symbol,
-      data: mean,
-    });
+    predictions[symbol] = mean;
   }
   return predictions;
 }
