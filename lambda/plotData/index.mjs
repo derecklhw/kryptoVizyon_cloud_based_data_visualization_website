@@ -17,22 +17,22 @@ export const handler = async (event) => {
       symbol === "Synthetic"
         ? "SyntheticDataEndpoint8"
         : symbol === "BTC"
-        ? "BTC-Endpoint1"
+        ? "BTC-Endpoint4"
         : symbol === "ETH"
-        ? "ETH-Endpoint3"
+        ? "ETH-Endpoint4"
         : symbol === "BNB"
-        ? "BNB-Endpoint"
+        ? "BNB-Endpoint4"
         : symbol === "SOL"
-        ? "SOL-Endpoint"
+        ? "SOL-Endpoint1"
         : symbol === "DOGE"
-        ? "DOGE-Endpoint"
+        ? "DOGE-Endpoint1"
         : "None";
 
     if (endpoint === "None") return { statusCode: 400, body: "Invalid symbol" };
 
     //Get data
     let responseData;
-    if (symbol === "synthetic") {
+    if (symbol === "Synthetic") {
       responseData = await axios.get(url + studentID);
     } else {
       responseData = await queryData(symbol);
