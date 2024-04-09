@@ -67,10 +67,19 @@ const websocketUrl =
 
 const socket = new WebSocket(websocketUrl);
 
+const requestInitialData = () => {
+  socket.send(
+    JSON.stringify({
+      action: "initialData",
+    })
+  );
+};
+
 onMounted(() => {
   // Connection opened
   socket.addEventListener("open", () => {
     console.log("The connection has been opened successfully.");
+    requestInitialData();
   });
 
   // Connection closed
@@ -83,9 +92,11 @@ onMounted(() => {
     console.log("WebSocket error: ", event);
   });
 
-  setTimeout(() => {
-    loading.value = false;
-  }, 2000);
+  // Listen for messages
+  socket.addEventListener("message", (event) => {
+    const data = JSON.parse(event.data);
+    console.log("Message from server ", data);
+  });
 });
 
 onUnmounted(() => {

@@ -30,7 +30,7 @@ export const handler = async (event) => {
 
     if (endpoint === "None") return { statusCode: 400, body: "Invalid symbol" };
 
-    //Get synthetic data
+    //Get data
     let responseData;
     if (symbol === "synthetic") {
       responseData = await axios.get(url + studentID);
