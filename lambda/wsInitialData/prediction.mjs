@@ -4,7 +4,7 @@ import {
   InvokeEndpointCommand,
 } from "@aws-sdk/client-sagemaker-runtime";
 
-import { addHours, format } from "date-fns";
+import { format } from "date-fns";
 
 //Create SageMakerRuntimeClient
 const client = new SageMakerRuntimeClient({});
@@ -16,28 +16,37 @@ export async function getPredictions(historicData) {
   for (const data of historicData) {
     let symbol = data.symbol;
     let start = data.data[0].timestamp;
+    let last = data.data[data.data.length - 1].timestamp;
     let target = data.data.map((item) => item.close);
 
     let endpoint =
       symbol === "BTC"
-        ? "BTC-Endpoint1"
+        ? "BTC-Endpoint4"
         : symbol === "ETH"
-        ? "ETH-Endpoint3"
+        ? "ETH-Endpoint4"
         : symbol === "BNB"
-        ? "BNB-Endpoint"
+        ? "BNB-Endpoint4"
         : symbol === "SOL"
-        ? "SOL-Endpoint"
+        ? "SOL-Endpoint1"
         : symbol === "DOGE"
-        ? "DOGE-Endpoint"
+        ? "DOGE-Endpoint1"
         : "None";
 
     if (endpoint === "None") return { statusCode: 400, body: "Invalid symbol" };
 
-    let result = await invokeEndpoint(endpoint, target, start);
+    let { mean } = await invokeEndpoint(endpoint, target, start);
+
+    mean = mean.map((item) => {
+      last += 3600;
+      return {
+        timestamp: last,
+        close: item,
+      };
+    });
 
     predictions.push({
       symbol: symbol,
-      data: result,
+      data: mean,
     });
   }
   return predictions;
@@ -49,13 +58,15 @@ export async function invokeEndpoint(endpointName, data, originalStartTime) {
       Should be last 100 points in your time series (depending on your choice of hyperparameters).
       Make sure that start is correct.
   */
-  // const last100DataPoints = data.slice(-100);
-  // const newStartTime = addHours(originalStartTime, data.length - 100);
+
+  const last100DataPoints = data.slice(-100);
+  const newStartTimeUnix = originalStartTime + (data.length - 100) * 3600;
+  const newStartTime = new Date(newStartTimeUnix * 1000);
   const endpointData = {
     instances: [
       {
-        start: format(originalStartTime, "yyyy-MM-dd HH:mm:ss"),
-        target: data,
+        start: format(newStartTime, "yyyy-MM-dd HH:mm:ss"),
+        target: last100DataPoints,
       },
     ],
     configuration: {
@@ -76,5 +87,8 @@ export async function invokeEndpoint(endpointName, data, originalStartTime) {
 
   //Must install @types/node for this to work
   let result = JSON.parse(Buffer.from(response.Body).toString("utf8"));
-  return result.predictions[0].mean;
+
+  return {
+    mean: result.predictions[0].mean,
+  };
 }

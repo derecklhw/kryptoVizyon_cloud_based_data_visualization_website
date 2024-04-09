@@ -25,6 +25,16 @@ export async function getSendMessagePromise(domain, stage, connId) {
 
     console.log("Successfully retrieved data.");
 
+    // console.log(predictions);
+
+    // Only send last 150 data points
+    historicData = historicData.map((data) => {
+      return {
+        symbol: data.symbol,
+        data: data.data.slice(-150),
+      };
+    });
+
     //Create post to connection command
     const postToConnectionCommand = new PostToConnectionCommand({
       ConnectionId: connId,
@@ -41,6 +51,7 @@ export async function getSendMessagePromise(domain, stage, connId) {
     console.log("Successfully sent data to: " + connId);
   } catch (err) {
     console.log("Failed to send data to: " + connId);
+    console.log("Error: " + JSON.stringify(err));
     throw err;
   }
 

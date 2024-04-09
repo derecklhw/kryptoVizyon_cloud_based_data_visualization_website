@@ -29,9 +29,11 @@ export async function getSentimentAnalysis() {
       if (Items.length > 0) {
         sentiments.push({
           symbol: symbol,
-          negative: Items[0].negative,
-          positive: Items[0].positive,
-          neutral: Items[0].neutral,
+          data: {
+            negative: Items[0].negative,
+            positive: Items[0].positive,
+            neutral: Items[0].neutral,
+          },
         });
       } else {
         console.log("No data found for symbol:", symbol);
@@ -57,17 +59,25 @@ export async function getHistoricData() {
       ExpressionAttributeValues: {
         ":symbol": symbol,
       },
-      ScanIndexForward: false,
-      Limit: 100,
     });
 
     try {
       const { Items } = await docClient.send(command);
 
+      let processedItems = Items.map((item) => {
+        return {
+          timestamp: Number(item.timestamp),
+          open: Number(item.open),
+          high: Number(item.high),
+          low: Number(item.low),
+          close: Number(item.close),
+        };
+      });
+
       if (Items.length > 0) {
         historicData.push({
           symbol: symbol,
-          data: Items,
+          data: processedItems,
         });
       } else {
         console.log("No data found for symbol:", symbol);
