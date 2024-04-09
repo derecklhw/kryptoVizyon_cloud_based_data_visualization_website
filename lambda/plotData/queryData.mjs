@@ -13,7 +13,6 @@ export async function queryData(symbol) {
     ExpressionAttributeValues: {
       ":symbol": symbol,
     },
-    ScanIndexForward: false,
   });
 
   try {
