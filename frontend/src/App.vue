@@ -122,7 +122,12 @@ onMounted(() => {
         console.log("New sentiment: ", latestSentiments.value);
         break;
       case "newPrediction":
-        predictions.value = data.predictions;
+        if (data.historicData && data.predictions) {
+          for (const symbol in data.historicData) {
+            historicalData.value[symbol] = data.historicData[symbol];
+            predictions.value[symbol] = data.predictions[symbol];
+          }
+        }
         break;
       default:
         console.log("Unknown action: ", data.action);
