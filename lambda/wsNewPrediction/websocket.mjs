@@ -39,9 +39,9 @@ export async function getSendPredictionsPromises(domain, stage, symbol) {
     throw err;
   }
 
-  // Get predictions
   let predictions = {};
 
+  // Get predictions
   try {
     predictions = await getPredictions(historicData);
   } catch (err) {
