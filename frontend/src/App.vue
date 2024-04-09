@@ -10,6 +10,8 @@
               v-for="symbol in symbols"
               :key="symbol.name"
               :crypto="symbol.name"
+              :historicalData="historicalData[symbol.name]"
+              :predictions="predictions[symbol.name]"
             />
           </div>
         </div>
@@ -119,6 +121,7 @@ onMounted(() => {
       default:
         console.log("Unknown action: ", data.action);
     }
+    console.log(predictions.value["BTC"]);
   });
 });
 
