@@ -8,7 +8,6 @@
           <div class="flex sm:flex-row flex-col">
             <ZoomableTimeSeries
               v-for="symbol in symbols"
-              :key="symbol.name"
               :crypto="symbol.name"
               :historicalData="historicalData[symbol.name]"
               :predictions="predictions[symbol.name]"
@@ -18,7 +17,7 @@
         <div class="flex-grow basis-2/3 border-y-2 border-slate-950">
           <div class="flex justify-between items-center">
             <h1 class="text-lg px-4 py-3 font-medium">
-              {{ selectedSymbol.name }} Performance
+              <b>{{ selectedSymbol.name }}</b> Historical Performance
             </h1>
             <Dropdown
               v-model="selectedSymbol"
@@ -71,11 +70,13 @@ const historicalData = ref<CryptoData>({});
 const predictions = ref<CryptoData>({});
 const loading = ref(true);
 
+// Websocket connection
 const websocketUrl =
   "wss://sq12h10asg.execute-api.us-east-1.amazonaws.com/prod/";
 
 const socket = new WebSocket(websocketUrl);
 
+// Request initial data from the server
 const requestInitialData = () => {
   socket.send(
     JSON.stringify({
@@ -121,7 +122,6 @@ onMounted(() => {
       default:
         console.log("Unknown action: ", data.action);
     }
-    console.log(predictions.value["BTC"]);
   });
 });
 

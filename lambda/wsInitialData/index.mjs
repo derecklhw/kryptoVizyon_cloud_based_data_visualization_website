@@ -3,8 +3,6 @@ import { getSendMessagePromise } from "./websocket.mjs";
 
 export const handler = async (event) => {
   try {
-    // console.log(JSON.stringify(event));
-
     //Extract domain and stage from event
     const domain = event.requestContext.domainName;
     const stage = event.requestContext.stage;

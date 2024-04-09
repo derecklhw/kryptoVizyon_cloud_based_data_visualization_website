@@ -9,7 +9,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { defineProps, computed } from "vue";
+import { computed } from "vue";
 import { SentimentDataPoint } from "../types";
 
 const props = defineProps<{
@@ -38,6 +38,7 @@ const chartOptions = {
   ],
 };
 
+// Convert sentiment data to series format
 const series = computed(() => {
   return props.sentiment
     ? [

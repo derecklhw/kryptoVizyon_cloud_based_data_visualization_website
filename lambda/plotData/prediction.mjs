@@ -1,4 +1,3 @@
-//Import AWS
 import {
   SageMakerRuntimeClient,
   InvokeEndpointCommand,
@@ -9,13 +8,14 @@ import { addHours, format } from "date-fns";
 //Create SageMakerRuntimeClient
 const client = new SageMakerRuntimeClient({});
 
-//Calls endpoint and logs results
+/*
+ * Function to invoke endpoint
+ * @param endpointName - Name of endpoint
+ * @param data - Data to send to endpoint
+ * @param originalStartTime - Original start time of data
+ * @return - Predictions from endpoint
+ */
 export async function invokeEndpoint(endpointName, data, originalStartTime) {
-  /* Data we are going to send to endpoint
-    REPLACE WITH YOUR OWN DATA!
-    Should be last 100 points in your time series (depending on your choice of hyperparameters).
-    Make sure that start is correct.
-*/
   const last100DataPoints = data.slice(-100);
   const newStartTime = addHours(originalStartTime, data.length - 100);
   const endpointData = {
@@ -41,7 +41,6 @@ export async function invokeEndpoint(endpointName, data, originalStartTime) {
   });
   const response = await client.send(command);
 
-  //Must install @types/node for this to work
   let predictions = JSON.parse(Buffer.from(response.Body).toString("utf8"));
   return predictions;
 }

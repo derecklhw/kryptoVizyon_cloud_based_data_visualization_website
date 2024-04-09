@@ -46,6 +46,11 @@ var uuid_1 = require("uuid");
 dotenv_1.default.config();
 var crypto_compare_api_key = process.env.CRYPTO_COMPARE_API_KEY;
 var QUERY_LIMIT = 499;
+/*
+* This function retrieves historical data for a given cryptocurrency symbol
+* @param {string} symbol - The symbol of the cryptocurrency to retrieve data for
+* @returns {Promise<WriteRequest[]>} - An array of WriteRequest objects
+*/
 var getNumericalData = function (symbol) { return __awaiter(void 0, void 0, void 0, function () {
     var apiUrl, response, data, error_1;
     return __generator(this, function (_a) {
@@ -59,8 +64,10 @@ var getNumericalData = function (symbol) { return __awaiter(void 0, void 0, void
             case 2:
                 response = _a.sent();
                 data = response.data.Data;
+                // If there is no data, return an empty array
                 if (!data.Data || data.Data.length === 0)
                     return [2 /*return*/, []];
+                // Preprocess and return the data
                 return [2 /*return*/, preprocess(data.Data, symbol)];
             case 3:
                 error_1 = _a.sent();
@@ -70,6 +77,12 @@ var getNumericalData = function (symbol) { return __awaiter(void 0, void 0, void
     });
 }); };
 exports.getNumericalData = getNumericalData;
+/*
+* This function preprocesses the data retrieved from the API
+* @param {CryptoData[]} historicalData - The data retrieved from the API
+* @param {string} symbol - The symbol of the cryptocurrency
+* @returns {WriteRequest[]} - An array of WriteRequest objects
+*/
 var preprocess = function (historicalData, symbol) {
     return historicalData.map(function (data) {
         return {

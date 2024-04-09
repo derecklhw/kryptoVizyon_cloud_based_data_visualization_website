@@ -44,12 +44,18 @@ var node_process_1 = __importDefault(require("node:process"));
 var text_data_1 = require("./text-data");
 var numerical_data_1 = require("./numerical-data");
 var lib_dynamodb_1 = require("@aws-sdk/lib-dynamodb");
+/*
+* This function retrieves data from third party APIs and writes it to DynamoDB
+* @param {string} table - The name of the table to write the data to
+* @returns {Promise<void>}
+*/
 var getThirdPartyData = function (table) { return __awaiter(void 0, void 0, void 0, function () {
     var client, docClient, symbols, batchWriteLimit_1, dataChunks_2, currentChunk_1, _i, symbols_1, symbol, requestData, _a, _b, dataChunks_1, chunk, putRequests, command, error_1;
     var _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
             case 0:
+                // Validate input
                 if (!table)
                     throw new Error('No table provided');
                 if (table !== "News" && table !== "Crypto")
@@ -80,6 +86,7 @@ var getThirdPartyData = function (table) { return __awaiter(void 0, void 0, void
             case 6:
                 requestData = _a;
                 requestData.forEach(function (item) {
+                    // If the current chunk is full, add it to the dataChunks array and create a new chunk
                     if (currentChunk_1.length >= batchWriteLimit_1) {
                         dataChunks_2.push(currentChunk_1);
                         currentChunk_1 = [];
@@ -91,6 +98,7 @@ var getThirdPartyData = function (table) { return __awaiter(void 0, void 0, void
                 _i++;
                 return [3 /*break*/, 2];
             case 8:
+                // Add the last chunk to the dataChunks array
                 if (currentChunk_1.length > 0)
                     dataChunks_2.push(currentChunk_1);
                 _b = 0, dataChunks_1 = dataChunks_2;

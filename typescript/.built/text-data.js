@@ -46,6 +46,11 @@ var uuid_1 = require("uuid");
 dotenv_1.default.config();
 var newsApiKey = process.env.NEWS_API_KEY;
 var QUERY_LIMIT = 50;
+/*
+* This function retrieves news data for a given symbol
+* @param {string} symbol - The symbol to retrieve news data for
+* @returns {Promise<WriteRequest[]>} - An array of WriteRequest objects
+*/
 var getNewsData = function (symbol) { return __awaiter(void 0, void 0, void 0, function () {
     var apiUrl, response, data, error_1;
     return __generator(this, function (_a) {
@@ -59,9 +64,12 @@ var getNewsData = function (symbol) { return __awaiter(void 0, void 0, void 0, f
             case 2:
                 response = _a.sent();
                 data = response.data;
+                // If there is no data, return an empty array
                 if (!data.articles || data.articles.length === 0)
                     return [2 /*return*/, []];
+                // Limit the number of articles to QUERY_LIMIT     
                 data.articles = data.articles.slice(0, QUERY_LIMIT);
+                // Preprocess and return the data
                 return [2 /*return*/, preprocess(data.articles, symbol)];
             case 3:
                 error_1 = _a.sent();
@@ -71,6 +79,12 @@ var getNewsData = function (symbol) { return __awaiter(void 0, void 0, void 0, f
     });
 }); };
 exports.getNewsData = getNewsData;
+/*
+* This function preprocesses the data retrieved from the API
+* @param {News[]} articles - The data retrieved from the API
+* @param {string} symbol - The symbol of the cryptocurrency
+* @returns {WriteRequest[]} - An array of WriteRequest objects
+*/
 var preprocess = function (articles, symbol) {
     return articles.map(function (article) {
         return {

@@ -7,6 +7,7 @@ import { QueryCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import axios from "axios";
 import { v4 } from "uuid";
 
+// Create DynamoDBClient and DynamoDBDocumentClient
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 
@@ -21,6 +22,7 @@ export const handler = async (event) => {
         neutral = [],
         textArray = [];
 
+      // Query the last 3 news articles for each symbol
       const command = new QueryCommand({
         TableName: "News",
         IndexName: "symbol-timestamp-index",
@@ -43,6 +45,7 @@ export const handler = async (event) => {
 
       if (!textArray.length) return;
 
+      // Fetch sentiment analysis for each article
       const sentimentResults = await Promise.all(
         textArray.map(async (text) => {
           try {
@@ -63,6 +66,7 @@ export const handler = async (event) => {
         })
       );
 
+      // Calculate average sentiment for each symbol
       sentimentResults.forEach((result) => {
         if (!result) return;
 
@@ -90,8 +94,10 @@ export const handler = async (event) => {
     })
   );
 
+  // Filter out any undefined sentiments
   const sentimentsFiltered = sentiments.filter((sentiment) => sentiment);
 
+  // Write sentiments to DynamoDB
   const command = new BatchWriteItemCommand({
     RequestItems: {
       Sentiments: sentimentsFiltered,

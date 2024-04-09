@@ -1,13 +1,22 @@
-//Authentication details for Plotly
-//ADD YOUR OWN AUTHENTICATION DETAILS
+import Plotly from "plotly";
+
+// Initialize Plotly with user details
 const PLOTLY_USERNAME = process.env.PLOTLY_USERNAME;
 const PLOTLY_KEY = process.env.PLOTLY_API_KEY;
 
-//Initialize Plotly with user details.
-import Plotly from "plotly";
 let plotly = Plotly(PLOTLY_USERNAME, PLOTLY_KEY);
 
-//Plots the specified data
+/*
+ * Plots the data using Plotly
+ * @param {string} symbol - The symbol of the data
+ * @param {number[]} xValues - The x values of the original data
+ * @param {number[]} yValues - The y values of the original data
+ * @param {number[]} xPredictionValues - The x values of the prediction data
+ * @param {number[]} yMeanValues - The mean values of the prediction data
+ * @param {number[]} yLowerQuantileValues - The lower quantile values of the prediction data
+ * @param {number[]} yUpperQuantileValues - The upper quantile values of the prediction data
+ * @returns {Promise} - The promise of the plot
+ */
 export async function plotData(
   symbol,
   xValues,
@@ -17,7 +26,7 @@ export async function plotData(
   yLowerQuantileValues,
   yUpperQuantileValues
 ) {
-  //Data structure
+  // Data for graph
   let studentData = {
     x: xValues,
     y: yValues,
@@ -62,6 +71,7 @@ export async function plotData(
       size: 12,
     },
   };
+
   let data = [studentData, meanData, lowestQuantile, highestQuantile];
 
   //Layout of graph

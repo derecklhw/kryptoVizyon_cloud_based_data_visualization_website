@@ -6,14 +6,21 @@ import {
 
 import { format } from "date-fns";
 
-//Create SageMakerRuntimeClient
+// Create SageMakerRuntimeClient
 const client = new SageMakerRuntimeClient({});
 
+/*
+ * Function to get predictions
+ * @param historicData - Historic data
+ * @return - Predictions
+ */
 export async function getPredictions(historicData) {
   console.log("Getting predictions...");
   let predictions = {};
 
+  // Loop through historic data for each symbol
   for (const data of historicData) {
+    // Extract symbol, start time, last time, and target data
     let symbol = data.symbol;
     let start = data.data[0].timestamp;
     let last = data.data[data.data.length - 1].timestamp;
@@ -34,8 +41,10 @@ export async function getPredictions(historicData) {
 
     if (endpoint === "None") return { statusCode: 400, body: "Invalid symbol" };
 
+    // Call function to get predictions
     let { mean } = await invokeEndpoint(endpoint, target, start);
 
+    // Create predictions object
     mean = mean.map((item) => {
       last += 3600;
       return {
@@ -49,16 +58,20 @@ export async function getPredictions(historicData) {
   return predictions;
 }
 
+/*
+ * Function to invoke endpoint
+ * @param endpointName - Name of endpoint
+ * @param data - Data to send to endpoint
+ * @param originalStartTime - Original start time of data
+ * @return - Predictions from endpoint
+ */
 export async function invokeEndpoint(endpointName, data, originalStartTime) {
-  /* Data we are going to send to endpoint
-      REPLACE WITH YOUR OWN DATA!
-      Should be last 100 points in your time series (depending on your choice of hyperparameters).
-      Make sure that start is correct.
-  */
-
+  // Extract last 100 data points and new start time
   const last100DataPoints = data.slice(-100);
   const newStartTimeUnix = originalStartTime + (data.length - 100) * 3600;
   const newStartTime = new Date(newStartTimeUnix * 1000);
+
+  // Create data for endpoint
   const endpointData = {
     instances: [
       {

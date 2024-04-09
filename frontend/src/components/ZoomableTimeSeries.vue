@@ -4,7 +4,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { defineProps, computed } from "vue";
+import { computed } from "vue";
 import { CryptoDataPoint } from "../types";
 
 const props = defineProps<{
@@ -70,6 +70,7 @@ const chartOptions = {
   },
 };
 
+// Convert historical data and predictions to series format
 const series = computed(() => {
   // Process historical data
   const historicalSeries = {
