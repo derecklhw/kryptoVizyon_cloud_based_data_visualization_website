@@ -114,13 +114,19 @@ onMounted(() => {
         loading.value = false;
         break;
       case "newSentiment":
-        latestSentiments.value = data.latestSentiments;
+        if (data.latestSentiments) {
+          for (const symbol in data.latestSentiments) {
+            latestSentiments.value[symbol] = data.latestSentiments[symbol];
+          }
+        }
+        console.log("New sentiment: ", latestSentiments.value);
         break;
       case "newPrediction":
         predictions.value = data.predictions;
         break;
       default:
         console.log("Unknown action: ", data.action);
+        window.location.reload();
     }
   });
 });

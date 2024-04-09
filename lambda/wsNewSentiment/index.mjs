@@ -1,5 +1,5 @@
 //Import external library with websocket functions
-import { getSendMessagePromises } from "./websocket.mjs";
+import { getSendSentimentsPromises } from "./websocket.mjs";
 
 export const handler = async (event) => {
   console.log(JSON.stringify(event));
@@ -9,11 +9,11 @@ export const handler = async (event) => {
     const stage = "prod";
     console.log("Domain: " + domain + " stage: " + stage);
 
-    //Get promises to send messages to connected clients
-    // let sendMsgPromises = await getSendMessagePromises(msg, domain, stage);
+    //Get promises to send latest sentiments to connected clients
+    let sendMsgPromises = await getSendSentimentsPromises(domain, stage);
 
     //Execute promises
-    // await Promise.all(sendMsgPromises);
+    await Promise.all(sendMsgPromises);
   } catch (err) {
     return { statusCode: 500, body: "Error: " + JSON.stringify(err) };
   }
