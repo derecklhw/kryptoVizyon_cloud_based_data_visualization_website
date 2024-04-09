@@ -1,5 +1,5 @@
 <template>
-  <div class="w-1/3 flex justify-center items-center border">
+  <div class="flex justify-center items-center border">
     <apexchart
       type="pie"
       width="550"

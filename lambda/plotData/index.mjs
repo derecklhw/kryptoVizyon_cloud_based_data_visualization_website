@@ -38,7 +38,10 @@ export const handler = async (event) => {
       responseData = await queryData(symbol);
     }
 
-    console.log("Data for '" + symbol + " extracted.");
+    if (!responseData || !responseData.data)
+      return { statusCode: 500, body: "Error extracting data" };
+
+    console.log("Data for '" + symbol + " extracted successfully.");
 
     let { target, start } = responseData.data;
 

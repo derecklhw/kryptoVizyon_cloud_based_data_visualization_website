@@ -40,8 +40,8 @@ export async function getSendMessagePromise(domain, stage, connId) {
     await apiGwClient.send(postToConnectionCommand);
     console.log("Successfully sent data to: " + connId);
   } catch (err) {
-    console.log(err);
     console.log("Failed to send data to: " + connId);
+    throw err;
   }
 
   return true;

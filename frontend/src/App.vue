@@ -26,8 +26,8 @@
             />
           </div>
           <div class="flex sm:flex-row flex-col mx-4 h-5/6 items-center">
-            <Candlestick />
-            <Pie />
+            <Candlestick class="w-2/3" />
+            <Pie class="w-1/3" />
           </div>
         </div>
       </div>
@@ -44,10 +44,11 @@ import Navbar from "./components/Navbar.vue";
 import ZoomableTimeSeries from "./components/ZoomableTimeSeries.vue";
 import Candlestick from "./components/Candlestick.vue";
 import Pie from "./components/Pie.vue";
+
 import Dropdown from "primevue/dropdown";
+import ProgressSpinner from "primevue/progressspinner";
 import { ref, onMounted, onUnmounted } from "vue";
 import { SYMBOL } from "./types";
-import ProgressSpinner from "primevue/progressspinner";
 
 const symbols: SYMBOL[] = [
   { name: "BTC" },
