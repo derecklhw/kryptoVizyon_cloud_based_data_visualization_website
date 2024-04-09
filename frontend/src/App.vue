@@ -26,8 +26,14 @@
             />
           </div>
           <div class="flex sm:flex-row flex-col mx-4 h-5/6 items-center">
-            <Candlestick class="w-2/3" />
-            <Pie class="w-1/3" />
+            <Candlestick
+              class="w-2/3"
+              :historicalData="historicalData[selectedSymbol.name]"
+            />
+            <Pie
+              class="w-1/3"
+              :sentiment="latestSentiments[selectedSymbol.name]"
+            />
           </div>
         </div>
       </div>
@@ -48,19 +54,19 @@ import Pie from "./components/Pie.vue";
 import Dropdown from "primevue/dropdown";
 import ProgressSpinner from "primevue/progressspinner";
 import { ref, onMounted, onUnmounted } from "vue";
-import { SYMBOL } from "./types";
+import { Crypto, SentimentsData, CryptoData } from "./types";
 
-const symbols: SYMBOL[] = [
+const symbols: Crypto[] = [
   { name: "BTC" },
   { name: "ETH" },
   { name: "BNB" },
   { name: "SOL" },
   { name: "DOGE" },
 ];
-const selectedSymbol = ref<SYMBOL>(symbols[0]);
-const latestSentiments = ref([]);
-const historicData = ref([]);
-const predictions = ref([]);
+const selectedSymbol = ref<Crypto>(symbols[0]);
+const latestSentiments = ref<SentimentsData>({});
+const historicalData = ref<CryptoData>({});
+const predictions = ref<CryptoData>({});
 const loading = ref(true);
 
 const websocketUrl =
@@ -97,6 +103,22 @@ onMounted(() => {
   socket.addEventListener("message", (event) => {
     const data = JSON.parse(event.data);
     console.log("Message from server ", data);
+    switch (data.action) {
+      case "initialData":
+        latestSentiments.value = data.sentiments;
+        historicalData.value = data.historicData;
+        predictions.value = data.predictions;
+        loading.value = false;
+        break;
+      case "newSentiment":
+        latestSentiments.value = data.latestSentiments;
+        break;
+      case "newPrediction":
+        predictions.value = data.predictions;
+        break;
+      default:
+        console.log("Unknown action: ", data.action);
+    }
   });
 });
 

@@ -9,12 +9,20 @@
   </div>
 </template>
 <script setup lang="ts">
+import { defineProps, computed } from "vue";
+import { SentimentDataPoint } from "../types";
+
+const props = defineProps<{
+  sentiment: SentimentDataPoint | null;
+}>();
+
 const chartOptions = {
   chart: {
     width: 550,
     type: "pie",
   },
   labels: ["Positive", "Negative", "Neutral"],
+  colors: ["#65D39A", "#FF6062", "#FEEA5C"],
   responsive: [
     {
       breakpoint: 480,
@@ -29,6 +37,15 @@ const chartOptions = {
     },
   ],
 };
-const series = [44, 55, 13];
+
+const series = computed(() => {
+  return props.sentiment
+    ? [
+        props.sentiment.positive,
+        props.sentiment.negative,
+        props.sentiment.neutral,
+      ]
+    : [];
+});
 </script>
 <style lang=""></style>
