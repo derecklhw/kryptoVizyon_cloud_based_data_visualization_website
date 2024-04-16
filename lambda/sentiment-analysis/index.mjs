@@ -34,10 +34,12 @@ export const handler = async (event) => {
         Limit: 3,
       });
 
+      // Fetch news articles
       try {
         const { Items } = await docClient.send(command);
         if (!Items || !Items.length) return;
 
+        // Extract article titles
         textArray = Items.map((item) => item.title);
       } catch (error) {
         return;

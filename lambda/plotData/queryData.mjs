@@ -25,16 +25,20 @@ export async function queryData(symbol) {
   });
 
   try {
+    // Send command
     const { Items } = await docClient.send(command);
 
+    // Extract close prices
     const series = Items.map((item) => item.close);
 
+    // Extract timestamp of first data point
     if (Items.length > 0 && Items[0].timestamp) {
       const timestamp = Number(Items[0].timestamp);
       const date = new Date(timestamp * 1000);
 
       const start = date.toISOString().replace("T", " ").substring(0, 19);
 
+      // Return data
       return {
         data: {
           target: series,
